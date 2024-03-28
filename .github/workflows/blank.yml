@@ -4,24 +4,25 @@ name: AWS example workflow
 on:
   push
 env:
-  AWS_REGION : "eu-west-1"
+  AWS_REGION : ${{ vars.AWS_REGION }}
+  AWS_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
 # permission can be added at job level or workflow level
 permissions:
   id-token: write   # This is required for requesting the JWT
   contents: read    # This is required for actions/checkout
 jobs:
-  S3PackageUpload:
+  ListS3Buckets:
     runs-on: ubuntu-latest
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v4
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::211125583016:role/Github_to_AWS
+          role-to-assume: ${{ env.AWS_ROLE }}
           role-session-name: samplerolesession
           aws-region: ${{ env.AWS_REGION }}
-      # Upload a file to AWS s3
+      # Lits s3 buckets
       - name:  List s3 buckets in the region
         run: |
           aws s3 ls
