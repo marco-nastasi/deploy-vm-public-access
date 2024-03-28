@@ -10,7 +10,7 @@ terraform {
     hostname = "app.terraform.io"
     
     workspaces {
-      tags = [ "docker-playground" ]
+      name = "docker-playground"
     }
   }
 }
