@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "4.66"
+      version = "5.43"
     }
   }
   cloud {
@@ -40,10 +40,11 @@ resource "aws_subnet" "docker-playground" {
 
 resource "aws_security_group" "docker-playground" {
   name = "${var.prefix}-security-group"
-  description = "Allow SSH traffic from public IP"
+  description = "Docker playground Security Group"
   vpc_id = aws_vpc.docker-playground.id
 
   ingress {
+    description = "Allow HTTP traffic to port 80"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -51,6 +52,7 @@ resource "aws_security_group" "docker-playground" {
   }
 
   ingress {
+    description = "Allow HTTP traffic to port 8008"
     from_port   = 8008
     to_port     = 8008
     protocol    = "tcp"
@@ -58,6 +60,7 @@ resource "aws_security_group" "docker-playground" {
   }
 
   ingress {
+    description = "Allow HTTP traffic to port 8081"
     from_port   = 8081
     to_port     = 8081
     protocol    = "tcp"
