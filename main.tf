@@ -134,7 +134,7 @@ resource "aws_iam_role_policy_attachment" "amazon_ssm_managed_instance_core" {
 resource "aws_instance" "docker-playground" {
   ami                         = data.aws_ami.amazon-linux-2023.id
   instance_type               = var.instance_type
-  key_name                    = aws_key_pair.docker-playground.key_name
+  #key_name                    = aws_key_pair.docker-playground.key_name
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.docker-playground.id
   vpc_security_group_ids      = [aws_security_group.docker-playground.id]
