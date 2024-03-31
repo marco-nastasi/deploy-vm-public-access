@@ -44,8 +44,22 @@ resource "aws_security_group" "docker-playground" {
   vpc_id = aws_vpc.docker-playground.id
 
   ingress {
-    from_port   = 22
-    to_port     = 22
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.my_own_public_ip
+  }
+
+  ingress {
+    from_port   = 8008
+    to_port     = 8008
+    protocol    = "tcp"
+    cidr_blocks = var.my_own_public_ip
+  }
+
+  ingress {
+    from_port   = 8081
+    to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = var.my_own_public_ip
   }
