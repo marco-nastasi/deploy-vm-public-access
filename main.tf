@@ -101,6 +101,36 @@ data "aws_ami" "amazon-linux-2023" {
   owners = ["amazon"]
 }
 
+resource "aws_iam_role" "docker-playground" {
+  name = "Ec2InstanceRole"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+               "Service": "ec2.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_instance_profile" "docker-playground" {
+  name = "ec2instance-role"
+  role = aws_iam_role.docker-playground.name
+}
+
+resource "aws_iam_role_policy_attachment" "amazon_ssm_managed_instance_core" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = aws_iam_role.docker-playground.name
+}
+
 resource "aws_instance" "docker-playground" {
   ami                         = data.aws_ami.amazon-linux-2023.id
   instance_type               = var.instance_type
@@ -108,26 +138,28 @@ resource "aws_instance" "docker-playground" {
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.docker-playground.id
   vpc_security_group_ids      = [aws_security_group.docker-playground.id]
+  iam_instance_profile = aws_iam_instance_profile.docker-playground.name
+
   tags = {
     Name = "${var.prefix}-docker-playground-instance"
   }
   user_data = file("${path.module}/boot_script.sh")
 }
 
-resource "tls_private_key" "docker-playground" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
+#resource "tls_private_key" "docker-playground" {
+#  algorithm = "RSA"
+#  rsa_bits  = 4096
+#}
 
-locals {
-  private_key_filename = "${var.prefix}-ssh-key.pem"
-}
+#locals {
+#  private_key_filename = "${var.prefix}-ssh-key.pem"
+#}
 
-resource "aws_key_pair" "docker-playground" {
-  key_name   = local.private_key_filename
-  public_key = tls_private_key.docker-playground.public_key_openssh
+#resource "aws_key_pair" "docker-playground" {
+#  key_name   = local.private_key_filename
+#  public_key = tls_private_key.docker-playground.public_key_openssh
 
-  provisioner "local-exec" { # Create a "myKey.pem" to your computer!!
-    command = "echo '${tls_private_key.docker-playground.private_key_pem}' > '${var.private_key_path}'"
-  }
-}
+#  provisioner "local-exec" { # Create a "myKey.pem" to your computer!!
+#    command = "echo '${tls_private_key.docker-playground.private_key_pem}' > '${var.private_key_path}'"
+#  }
+#}
