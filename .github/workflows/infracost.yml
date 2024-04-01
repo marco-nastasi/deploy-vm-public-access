@@ -9,11 +9,11 @@ on:
         - main
         - master
   
-  env:
+env:
     # If you use private modules you'll need this env variable to use
     # the same ssh-agent socket value across all jobs & steps.
     SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-  jobs:
+jobs:
     # This stage runs the Infracost CLI and posts PR comments.
     # It also updates PR comments when the PR is updated (synchronize event).
     infracost-pull-request-checks:
