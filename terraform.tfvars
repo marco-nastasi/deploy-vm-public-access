@@ -5,3 +5,4 @@ address_space = "10.255.0.0/16"
 subnet_prefix = "10.255.255.0/24"
 region = "eu-west-1"
 my_own_public_ip = ["79.147.83.193/32"]
+appname = "docker-playground"

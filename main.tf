@@ -25,7 +25,7 @@ resource "aws_vpc" "docker-playground" {
 
   tags = {
     name = "${var.prefix}-vpc-${var.region}"
-    environment = "Production"
+    app = "${var.appname}"
   }
 }
 
@@ -35,6 +35,7 @@ resource "aws_subnet" "docker-playground" {
 
   tags = {
     name = "${var.prefix}-subnet"
+    app = "${var.appname}"
   }
 }
 
@@ -77,6 +78,7 @@ resource "aws_security_group" "docker-playground" {
 
   tags = {
     Name = "${var.prefix}-security-group"
+    app = "${var.appname}"
   }
 }
 
@@ -85,15 +87,20 @@ resource "aws_internet_gateway" "docker-playground" {
 
   tags = {
     Name = "${var.prefix}-internet-gateway"
+    app = "${var.appname}"
   }
 }
 
 resource "aws_route_table" "docker-playground" {
   vpc_id = aws_vpc.docker-playground.id
-
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.docker-playground.id
+  }
+
+  tags = {
+    Name = "${var.prefix}-route-table"
+    app = "${var.appname}"
   }
 }
 
@@ -141,6 +148,11 @@ EOF
 resource "aws_iam_instance_profile" "docker-playground" {
   name = "ec2instance-role"
   role = aws_iam_role.docker-playground.name
+
+  tags = {
+    Name = "${var.prefix}-iam-instance-profile"
+    app = "${var.appname}"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "amazon_ssm_managed_instance_core" {
@@ -151,7 +163,6 @@ resource "aws_iam_role_policy_attachment" "amazon_ssm_managed_instance_core" {
 resource "aws_instance" "docker-playground" {
   ami                         = data.aws_ami.amazon-linux-2023.id
   instance_type               = var.instance_type
-  #key_name                    = aws_key_pair.docker-playground.key_name
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.docker-playground.id
   vpc_security_group_ids      = [aws_security_group.docker-playground.id]
@@ -159,24 +170,7 @@ resource "aws_instance" "docker-playground" {
 
   tags = {
     Name = "${var.prefix}-docker-playground-instance"
+    app = "${var.appname}"
   }
   user_data = file("${path.module}/boot_script.sh")
 }
-
-#resource "tls_private_key" "docker-playground" {
-#  algorithm = "RSA"
-#  rsa_bits  = 4096
-#}
-
-#locals {
-#  private_key_filename = "${var.prefix}-ssh-key.pem"
-#}
-
-#resource "aws_key_pair" "docker-playground" {
-#  key_name   = local.private_key_filename
-#  public_key = tls_private_key.docker-playground.public_key_openssh
-
-#  provisioner "local-exec" { # Create a "myKey.pem" to your computer!!
-#    command = "echo '${tls_private_key.docker-playground.private_key_pem}' > '${var.private_key_path}'"
-#  }
-#}
