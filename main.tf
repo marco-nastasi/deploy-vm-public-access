@@ -176,6 +176,8 @@ resource "aws_instance" "docker-playground" {
   tags = {
     Service = "${var.appname}"
     Environment = "${var.environment}"
+    root_block_device.Service = "${var.appname}"
+    root_block_device.Environment = "${var.environment}"
   }
   user_data = file("${path.module}/boot_script.sh")
 }
