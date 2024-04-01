@@ -24,8 +24,8 @@ resource "aws_vpc" "docker-playground" {
   enable_dns_hostnames = true
 
   tags = {
-    name = "${var.prefix}-vpc-${var.region}"
-    app = "${var.appname}"
+    Service = "${var.appname}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -34,8 +34,8 @@ resource "aws_subnet" "docker-playground" {
   cidr_block = var.subnet_prefix
 
   tags = {
-    name = "${var.prefix}-subnet"
-    app = "${var.appname}"
+    Service = "${var.appname}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -77,8 +77,8 @@ resource "aws_security_group" "docker-playground" {
   }
 
   tags = {
-    Name = "${var.prefix}-security-group"
-    app = "${var.appname}"
+    Service = "${var.appname}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -86,8 +86,8 @@ resource "aws_internet_gateway" "docker-playground" {
   vpc_id = aws_vpc.docker-playground.id
 
   tags = {
-    Name = "${var.prefix}-internet-gateway"
-    app = "${var.appname}"
+    Service = "${var.appname}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -99,8 +99,8 @@ resource "aws_route_table" "docker-playground" {
   }
 
   tags = {
-    Name = "${var.prefix}-route-table"
-    app = "${var.appname}"
+    Service = "${var.appname}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -150,8 +150,8 @@ resource "aws_iam_instance_profile" "docker-playground" {
   role = aws_iam_role.docker-playground.name
 
   tags = {
-    Name = "${var.prefix}-iam-instance-profile"
-    app = "${var.appname}"
+    Service = "${var.appname}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -169,8 +169,8 @@ resource "aws_instance" "docker-playground" {
   iam_instance_profile = aws_iam_instance_profile.docker-playground.name
 
   tags = {
-    Name = "${var.prefix}-docker-playground-instance"
-    app = "${var.appname}"
+    Service = "${var.appname}"
+    Environment = "${var.environment}"
   }
   user_data = file("${path.module}/boot_script.sh")
 }
