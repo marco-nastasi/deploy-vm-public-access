@@ -143,6 +143,11 @@ resource "aws_iam_role" "docker-playground" {
     ]
 }
 EOF
+
+  tags = {
+    Service = "${var.appname}"
+    Environment = "${var.environment}"
+  }
 }
 
 resource "aws_iam_instance_profile" "docker-playground" {

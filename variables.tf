@@ -5,7 +5,7 @@
 # Terraform code. If you create a variable with no default, the user will be
 # prompted to enter it (or define it via config file or command line flags.)
 variable "environment" {
-  description = "Environment of the app"
+  description = "Environment of the app: Dev, Stage, Prod"
 }
 
 variable "appname" {
