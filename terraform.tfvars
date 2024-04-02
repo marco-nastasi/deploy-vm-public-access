@@ -4,6 +4,6 @@ prefix = "marco-nastasi"
 address_space = "10.255.0.0/16"
 subnet_prefix = "10.255.255.0/24"
 region = "eu-west-1"
-my_own_public_ip = ["79.147.83.193/32"]
+my_own_public_ip = ["..../32"] # Replace this with your current public IP
 appname = "docker-playground"
 environment = "Dev"

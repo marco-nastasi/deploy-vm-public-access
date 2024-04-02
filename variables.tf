@@ -4,6 +4,7 @@
 # Here is where we store the default values for all the variables used in our
 # Terraform code. If you create a variable with no default, the user will be
 # prompted to enter it (or define it via config file or command line flags.)
+
 variable "environment" {
   description = "Environment of the app: Dev, Stage, Prod"
 }
@@ -36,30 +37,7 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-variable "admin_username" {
-  description = "Administrator user name for mysql"
-  default     = "hashicorp"
-}
-
-variable "height" {
-  default     = "400"
-  description = "Image height in pixels."
-}
-
-variable "width" {
-  default     = "600"
-  description = "Image width in pixels."
-}
-
-variable "placeholder" {
-  default     = "placekitten.com"
-  description = "Image-as-a-service URL. Some other fun ones to try are fillmurray.com, placecage.com, placebeard.it, loremflickr.com, baconmockup.com, placeimg.com, placebear.com, placeskull.com, stevensegallery.com, placedog.net"
-}
-
 variable "my_own_public_ip" {
   description = "Your public IP."
 }
 
-variable "private_key_path" {
-  description = "Path for the private key file."
-}
