@@ -124,7 +124,7 @@ resource "aws_instance" "docker_playground" {
   root_block_device {
     tags = local.tags
   }
-  user_data = file("${path.module}./scripts/boot_script.sh")
+  user_data = file("../scripts/boot_script.sh")
 }
 
 locals {
