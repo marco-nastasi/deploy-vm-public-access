@@ -22,7 +22,7 @@ variable "prefix" {
 
 variable "region" {
   description = "The region where the resources are created."
-  default     = "eu-west-1"
+  default     = "eu-central-1"
 }
 
 variable "address_space" {
