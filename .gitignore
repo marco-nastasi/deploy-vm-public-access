@@ -40,4 +40,7 @@ terraform.rc
 # Include lock.hcl
 .terraform.lock.hcl
 
+# Include terraform.tfvars
+*.tfvars
+
 # End of https://www.toptal.com/developers/gitignore/api/terraform
