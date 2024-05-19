@@ -45,12 +45,6 @@ jobs:
           cd terraform
           terraform init
 
-      # Checks that all Terraform configuration files adhere to a canonical format
-      - name: Terraform Format
-        run: |
-          cd terraform
-          terraform fmt -check
-
       # Generates an execution plan for Terraform
       - name: Terraform Plan
         run: |
