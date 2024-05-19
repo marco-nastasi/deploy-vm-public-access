@@ -117,4 +117,5 @@ chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 cd /home/ubuntu/
 git clone https://github.com/marco-nastasi/example-voting-app-monitored
 cd example-voting-app-monitored
+docker compose pull
 docker compose up -d
