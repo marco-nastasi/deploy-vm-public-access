@@ -7,14 +7,17 @@
 
 variable "environment" {
   description = "Environment of the app: Dev, Stage, Prod"
+  default     = "Dev"
 }
 
 variable "appname" {
   description = "Name of the app"
+  default     = "Docker_Playground"
 }
 
 variable "prefix" {
   description = "This prefix will be included in the name of most resources."
+  default     = "docker_playground_"
 }
 
 variable "region" {
@@ -39,5 +42,7 @@ variable "instance_type" {
 
 variable "my_own_public_ip" {
   description = "Your public IP."
+  default     = ["0.0.0.0/0"]
 }
+
 
