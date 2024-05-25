@@ -18,7 +18,7 @@ resource "aws_security_group" "docker_playground_sg" {
   vpc_id      = aws_vpc.docker_playground_vpc.id
 
   dynamic "ingress" {
-    for_each = [80, 8008, 8081]
+    for_each = [80, 8008, 8081, 3389]
     iterator = port
     content {
       description = "Allow traffic from port ${port.value}"
@@ -66,7 +66,7 @@ data "aws_ami" "ubuntu_2204" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server*"]
+    values = ["amzn2-x86_64-MATE*"]
   }
 
   filter {
@@ -74,7 +74,7 @@ data "aws_ami" "ubuntu_2204" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"]
+  owners = ["amazon"]
 }
 
 resource "aws_iam_role" "docker_playground" {
@@ -125,7 +125,7 @@ resource "aws_instance" "docker_playground" {
     tags = local.tags
   }
 
-  user_data = file("../scripts/boot_script.sh")
+  #  user_data = file("../scripts/boot_script.sh")
 }
 
 locals {
