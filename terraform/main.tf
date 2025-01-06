@@ -30,35 +30,45 @@ resource "aws_security_group" "docker_playground_sg" {
   description = "Docker playground Security Group"
   vpc_id      = aws_vpc.docker_playground_vpc.id
 
-  # Iterate through list of allowed ports from my public IP address only
-  dynamic "ingress" {
-    for_each = [80, 8008, 8081, 3389]
-    iterator = port
-    content {
-      description = "Allow traffic from port ${port.value}"
-      from_port   = port.value
-      to_port     = port.value
-      protocol    = "tcp"
-      cidr_blocks = var.my_own_public_ip
-    }
-  }
-
-  # Allow outgoing traffic everywhere
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-    prefix_list_ids = []
-  }
-
   tags = merge(
     local.tags,
     {
       Name = "${var.appname}/${var.environment}/DockerPlayground-SecurityGroup"
     },
   )
+}
 
+# Create Ingress Rules for Security Group
+resource "aws_vpc_security_group_ingress_rule" "ingress_rules" {
+  count             = length(var.allowed_ports)
+  security_group_id = aws_security_group.docker_playground_sg.id
+
+  cidr_ipv4   = var.my_own_public_ip
+  from_port   = var.allowed_ports[count.index]
+  ip_protocol = "tcp"
+  to_port     = var.allowed_ports[count.index]
+
+  tags = merge(
+    local.tags,
+    {
+      Name = "${var.appname}/${var.environment}/DockerPlayground-SGIngressRule"
+    },
+  )
+}
+
+# Create Egress Rules for the Security Group
+resource "aws_vpc_security_group_egress_rule" "example" {
+  security_group_id = aws_security_group.docker_playground_sg.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
+
+  tags = merge(
+    local.tags,
+    {
+      Name = "${var.appname}/${var.environment}/DockerPlayground-SGEgressRule"
+    },
+  )
 }
 
 # Define Internet Gateway to allow connectivity from my public IP address

@@ -44,4 +44,7 @@ variable "my_own_public_ip" {
   description = "Your public IP"
 }
 
-
+variable "allowed_ports" {
+  description = "List of ports that will be allowed from the public IP"
+  default     = [80, 8008, 8081]
+}
