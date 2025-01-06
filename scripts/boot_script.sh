@@ -1,10 +1,18 @@
 #!/bin/bash
+
+# Update repositories
 apt update -y
+
+# Install git, docker and nginx
 apt -y install git
 apt -y install docker.io
 apt -y install nginx
+
+# Start docker service and start after reboot
 systemctl start docker
 systemctl enable docker
+
+# Configure reverse proxy to access Prometheus, Grafana and Alertmanager on port 80
 cat > /etc/nginx/sites-enabled/default << EOF
 ##
 # You should look at the following URL's in order to grasp a solid understanding
@@ -111,13 +119,21 @@ server {
 #       }
 #}
 EOF
+
+# Install docker compose
 mkdir -p /usr/local/lib/docker/cli-plugins
 curl -SL https://github.com/docker/compose/releases/download/v2.26.0/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
 chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+# Clone example voting app monitored
 cd /home/ubuntu/
 git clone https://github.com/marco-nastasi/example-voting-app-monitored
 cd example-voting-app-monitored
+
+# Run example voting app with compose
 docker compose pull
 docker compose up -d
+
+# Restart nginx to apply new configuration and start after reboot
 systemctl restart nginx
 systemctl enable nginx
