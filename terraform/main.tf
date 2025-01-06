@@ -42,7 +42,7 @@ resource "aws_security_group" "docker_playground_sg" {
       cidr_blocks = var.my_own_public_ip
     }
   }
-  
+
   # Allow outgoing traffic everywhere
   egress {
     from_port       = 0
@@ -172,11 +172,11 @@ resource "aws_instance" "docker_playground" {
 
   root_block_device {
     tags = merge(
-    local.tags,
-    {
-      Name = "${var.appname}/${var.environment}/DockerPlayground-EBSVolume"
-    },
-  )
+      local.tags,
+      {
+        Name = "${var.appname}/${var.environment}/DockerPlayground-EBSVolume"
+      },
+    )
   }
 
   user_data = file("../scripts/boot_script.sh")
