@@ -41,8 +41,7 @@ variable "instance_type" {
 }
 
 variable "my_own_public_ip" {
-  description = "Your public IP."
-  default     = ["79.147.80.42/32"]
+  description = "Your public IP"
 }
 
 
