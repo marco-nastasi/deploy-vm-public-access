@@ -4,6 +4,7 @@ apt -y install git
 apt -y install docker.io
 apt -y install nginx
 systemctl start docker
+systemctl enable docker
 cat > /etc/nginx/sites-enabled/default << EOF
 ##
 # You should look at the following URL's in order to grasp a solid understanding
@@ -110,7 +111,6 @@ server {
 #       }
 #}
 EOF
-systemctl start nginx
 mkdir -p /usr/local/lib/docker/cli-plugins
 curl -SL https://github.com/docker/compose/releases/download/v2.26.0/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
 chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
@@ -119,3 +119,5 @@ git clone https://github.com/marco-nastasi/example-voting-app-monitored
 cd example-voting-app-monitored
 docker compose pull
 docker compose up -d
+systemctl restart nginx
+systemctl enable nginx
