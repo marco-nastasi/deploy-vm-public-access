@@ -43,4 +43,7 @@ terraform.rc
 # Include terraform.tfvars
 *.tfvars
 
+# Include backend.conf
+backend.conf
+
 # End of https://www.toptal.com/developers/gitignore/api/terraform

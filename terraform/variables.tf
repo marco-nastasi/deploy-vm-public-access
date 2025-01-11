@@ -7,44 +7,53 @@
 
 variable "environment" {
   description = "Environment of the app: Dev, Stage, Prod"
+  type        = string
   default     = "Dev"
 }
 
 variable "appname" {
   description = "Name of the app"
+  type        = string
   default     = "Docker_Playground"
 }
 
 variable "prefix" {
   description = "This prefix will be included in the name of most resources."
+  type        = string
   default     = "docker_playground_"
 }
 
 variable "region" {
   description = "The region where the resources are created."
+  type        = string
   default     = "eu-central-1"
 }
 
 variable "address_space" {
   description = "The address space that is used by the virtual network. You can supply more than one address space. Changing this forces a new resource to be created."
+  type        = string
   default     = "10.0.0.0/16"
 }
 
 variable "subnet_prefix" {
   description = "The address prefix to use for the subnet."
+  type        = string
   default     = "10.0.10.0/24"
 }
 
 variable "instance_type" {
   description = "Specifies the AWS instance type."
+  type        = string
   default     = "t2.micro"
 }
 
 variable "my_own_public_ip" {
-  description = "Your public IP"
+  description = "Your public IP. It's used to allow connections from this IP only"
+  type        = string
 }
 
 variable "allowed_ports" {
   description = "List of ports that will be allowed from the public IP"
+  type        = list(number)
   default     = [80, 8008, 8081]
 }
