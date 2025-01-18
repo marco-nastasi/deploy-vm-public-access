@@ -1,0 +1,57 @@
+name: Destroy AWS Infrastructure
+
+on:
+  workflow_dispatch: # Trigger manually
+
+env:
+  TF_VERSION: "1.10.4"
+  AWS_REGION: "eu-central-1"
+
+jobs:
+  setup:
+    name: Setup Terraform and AWS OIDC
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS OIDC credentials
+        id: configure-aws
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+  terraform:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init \
+          -backend-config="bucket=${{ secrets.TF_BUCKET_NAME }}" \
+          -backend-config="key=${{ secrets.TF_S3_KEY }}" \
+          -backend-config="region=${{ env.AWS_REGION }}" \
+          -backend-config="dynamodb_table=${{ secrets.TF_LOCK_TABLE }}"
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
