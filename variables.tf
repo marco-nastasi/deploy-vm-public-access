@@ -50,6 +50,7 @@ variable "instance_type" {
 variable "my_own_public_ip" {
   description = "Your public IP. It's used to allow connections from this IP only"
   type        = string
+  sensitive   = true
 }
 
 variable "allowed_ports" {
