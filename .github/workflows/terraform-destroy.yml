@@ -41,4 +41,6 @@ jobs:
             -backend-config="dynamodb_table=${{ secrets.TFSTATE_TABLE_NAME }}"
 
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve
+        run: |
+          terraform destroy -auto-approve  \
+            -var="my_own_public_ip=${{ secrets.MY_PUBLIC_IP }}"
