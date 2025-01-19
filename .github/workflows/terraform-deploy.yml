@@ -54,6 +54,4 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: |
-          terraform apply tfplan  \
-            -var="my_own_public_ip=${{ secrets.MY_PUBLIC_IP }}"
+        run: terraform apply tfplan
