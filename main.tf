@@ -189,7 +189,7 @@ resource "aws_instance" "docker_playground" {
     )
   }
 
-  user_data = file("../scripts/boot_script.sh")
+  user_data = file("scripts/boot_script.sh")
 }
 
 # Define tags for all resources
