@@ -14,8 +14,8 @@ env:
   AWS_REGION: "eu-central-1"
 
 jobs:
-  setup:
-    name: Setup Terraform and AWS OIDC
+  deploy:
+    name: Deploy to AWS using Terraform
     runs-on: ubuntu-latest
 
     permissions:
