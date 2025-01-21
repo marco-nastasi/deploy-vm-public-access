@@ -1,4 +1,4 @@
-name: 'Validate Terraform Format'
+name: Validate Terraform Format
 
 on:
   push:
