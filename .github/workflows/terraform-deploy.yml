@@ -1,4 +1,4 @@
-name: 'Deploy to AWS'
+name: 'Validate and deploy to AWS'
 
 on:
   push:
@@ -14,22 +14,66 @@ env:
   AWS_REGION: "eu-central-1"
 
 jobs:
+  validate:
+    name: Validate Terraform code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        id: checkout-code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        id: setup-terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Check Terraform Formatting
+        id: fmt-check
+        run: terraform fmt -check -recursive || echo "Formatting required"
+
+      - name: Fix Terraform Formatting
+        if: ${{ steps.fmt-check.outcome == 'failure' }}
+        run: terraform fmt -recursive
+
+      - name: Commit and Push Changes
+        if: ${{ steps.fmt-check.outcome == 'failure' }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b terraform-format-fix
+          git add .
+          git commit -m "Apply Terraform formatting fixes"
+          git push origin terraform-format-fix
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Pull Request
+        if: ${{ steps.fmt-check.outcome == 'failure' }}
+        run: gh pr create --title "Fix: Terraform Formatting" --body "This PR fixes Terraform formatting issues." --head terraform-format-fix
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
   deploy:
     name: Deploy to AWS using Terraform
     runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
       - name: Checkout code
+        id: checkout-code
         uses: actions/checkout@v4
 
       - name: Setup Terraform
+        id: setup-terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Check Terraform Formatting
+        id: fmt-check
+        run: terraform fmt -check -recursive || echo "Formatting required"
 
       - name: Configure AWS OIDC credentials
         id: configure-aws
