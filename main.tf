@@ -171,7 +171,7 @@ resource "aws_instance" "docker_playground" {
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.docker_playground_public_subnet.id
   vpc_security_group_ids      = [aws_security_group.docker_playground_sg.id]
-  iam_instance_profile       = aws_iam_instance_profile.docker_playground.name
+  iam_instance_profile        = aws_iam_instance_profile.docker_playground.name
 
   tags = merge(
     local.tags,
