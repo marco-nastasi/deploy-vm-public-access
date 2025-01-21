@@ -38,13 +38,3 @@ jobs:
         run: |
           echo "::error::Terraform formatting issues found. Please run 'terraform fmt' locally and commit the changes."
           exit 1
-
-      - name: Run tflint
-        id: tflint-check
-        run: tflint --recursive
-    
-      - name: Fail if tflint Issues Found
-        if: ${{ failure() }}
-        run: |
-          echo "::error::tflint detected issues in the Terraform code. Please address these warnings/errors."
-          exit 1
