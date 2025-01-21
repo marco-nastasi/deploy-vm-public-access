@@ -1,0 +1,50 @@
+name: 'Validate Terraform Format'
+
+on:
+  push:
+    branches: 
+      - main
+  pull_request:
+    branches:
+      - main
+
+
+env:
+  TF_VERSION: "1.10.4"
+  AWS_REGION: "eu-central-1"
+
+jobs:
+  validate:
+    name: Validate Terraform code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        id: checkout-code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        id: setup-terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Check Terraform Formatting
+        id: fmt-check
+        run: terraform fmt -check -recursive
+    
+      - name: Fail if Format Changes Are Needed
+        if: ${{ failure() }}
+        run: |
+          echo "::error::Terraform formatting issues found. Please run 'terraform fmt' locally and commit the changes."
+          exit 1
+
+      - name: Run tflint
+        id: tflint-check
+        run: tflint --recursive
+    
+      - name: Fail if tflint Issues Found
+        if: ${{ failure() }}
+        run: |
+          echo "::error::tflint detected issues in the Terraform code. Please address these warnings/errors."
+          exit 1
