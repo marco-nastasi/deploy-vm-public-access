@@ -43,6 +43,10 @@ jobs:
     name: Deploy to AWS using Terraform
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - name: Checkout code
         id: checkout-code
