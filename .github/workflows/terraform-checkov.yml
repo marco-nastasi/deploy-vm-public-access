@@ -2,7 +2,7 @@ name: Security scan using checkov
 
 on:
   workflow_run:
-    workflows: ["Validate Terraform code"]
+    workflows: terraform-fmt-validate.yml
     types: [completed]
     branches: ["main"]
 
