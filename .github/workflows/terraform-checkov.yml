@@ -25,10 +25,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so follow-up steps can access it
       - name: Checkout code
-        uses: actions/checkout@v4
         id: checkout-code
+        uses: actions/checkout@v4
 
       - name: Checkov GitHub Action
+        id: security-scan-checkov
         uses: bridgecrewio/checkov-action@v12
         with:
           # This will add both a CLI output to the console and create a results.sarif file
@@ -36,7 +37,8 @@ jobs:
           output_file_path: console,results.sarif
         
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+        id: upload-security-scan-results
+        uses: github/codeql-action/upload-sarif@v3
         
         # Results are generated only on a success or failure
         # this is required since GitHub by default won't run the next step
