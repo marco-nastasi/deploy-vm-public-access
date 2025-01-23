@@ -4,7 +4,7 @@ resource "aws_vpc" "docker_playground_vpc" {
   enable_dns_hostnames = true
 
   # Skip specific security scan policies
-  #checkov:skip=CKV_AWS_11:DEV ENV does not need VPC flow logging
+  #checkov:skip=CKV2_AWS_11:DEV ENV does not need VPC flow logging
 
   tags = merge(
     local.tags,
