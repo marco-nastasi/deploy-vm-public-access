@@ -3,6 +3,9 @@ resource "aws_vpc" "docker_playground_vpc" {
   cidr_block           = var.address_space
   enable_dns_hostnames = true
 
+  # Skip specific security scan policies
+    #checkov:skip=CKV_AWS_11:DEV ENV does not need VPC flow logging
+
   tags = merge(
     local.tags,
     {
@@ -14,20 +17,6 @@ resource "aws_vpc" "docker_playground_vpc" {
 # Create default security group that restricts all traffic
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.docker_playground_vpc.id
-
-  ingress {
-    protocol  = "-1"
-    self      = true
-    from_port = 0
-    to_port   = 0
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }
 
 # Create a public subnet inside the VPC using the CIDR configured in subnet_prefix
@@ -194,6 +183,10 @@ resource "aws_iam_role_policy_attachment" "amazon_ssm_managed_instance_core" {
 resource "aws_instance" "docker_playground" {
   ami           = data.aws_ami.ubuntu_2204.id
   instance_type = var.instance_type
+
+  # Skip specific security scan policies
+    #checkov:skip=CKV_AWS_88:The SG only allows connections from one host
+    #checkov:skip=CKV_AWS_126:DEV ENV does not require detailed monitoring
 
   metadata_options {
     http_endpoint = "enabled"
