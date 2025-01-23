@@ -4,7 +4,7 @@ resource "aws_vpc" "docker_playground_vpc" {
   enable_dns_hostnames = true
 
   # Skip specific security scan policies
-    #checkov:skip=CKV_AWS_11:DEV ENV does not need VPC flow logging
+  #checkov:skip=CKV_AWS_11:DEV ENV does not need VPC flow logging
 
   tags = merge(
     local.tags,
@@ -185,8 +185,8 @@ resource "aws_instance" "docker_playground" {
   instance_type = var.instance_type
 
   # Skip specific security scan policies
-    #checkov:skip=CKV_AWS_88:The SG only allows connections from one host
-    #checkov:skip=CKV_AWS_126:DEV ENV does not require detailed monitoring
+  #checkov:skip=CKV_AWS_88:The SG only allows connections from one host
+  #checkov:skip=CKV_AWS_126:DEV ENV does not require detailed monitoring
 
   metadata_options {
     http_endpoint = "enabled"
