@@ -24,11 +24,11 @@ jobs:
     steps:
       - name: Checkout code
         id: checkout-code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Setup Terraform
         id: setup-terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
@@ -57,13 +57,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so follow-up steps can access it
-      - name: Checkout code
-        id: checkout-code
-        uses: actions/checkout@v4
+      #- name: Checkout code
+      #  id: checkout-code
+      #  uses: actions/checkout@v4
 
       - name: Checkov GitHub Action
         id: security-scan-checkov
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@50b959918599bb15388ef018e2f51c5e83e2d0e2
         with:
           # This will add both a CLI output to the console and create a results.sarif file
           output_format: cli,sarif
@@ -71,7 +71,7 @@ jobs:
         
       - name: Upload SARIF file
         id: upload-security-scan-results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@f6091c0113d1dcf9b98e269ee48e8a7e51b7bdd4
         
         # Results are generated only on a success or failure
         # this is required since GitHub by default won't run the next step
@@ -92,15 +92,15 @@ jobs:
       contents: read
     
     steps:
-      - name: Checkout code
-        id: checkout-code
-        uses: actions/checkout@v4
+      #- name: Checkout code
+      #  id: checkout-code
+      #  uses: actions/checkout@v4
     
-      - name: Setup Terraform
-        id: setup-terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
+      #- name: Setup Terraform
+      #  id: setup-terraform
+      #  uses: hashicorp/setup-terraform@v3
+      #  with:
+      #    terraform_version: ${{ env.TF_VERSION }}
     
       - name: Configure AWS OIDC credentials
         id: configure-aws
