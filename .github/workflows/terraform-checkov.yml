@@ -1,5 +1,7 @@
 name: Security scan using checkov
 
+permissions: {}
+
 on:
   workflow_run:
     workflows: ["Validate Terraform Format"]
