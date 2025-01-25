@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Check Workflow A Status
         id: check-status
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410
         with:
           script: |
             const { data: runs } = await github.actions.listWorkflowRuns({
