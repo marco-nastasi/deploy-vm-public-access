@@ -50,6 +50,7 @@ jobs:
   deploy:
     name: Terraform Apply
     runs-on: ubuntu-latest
+    needs: check-plan
 
     permissions:
       id-token: write
