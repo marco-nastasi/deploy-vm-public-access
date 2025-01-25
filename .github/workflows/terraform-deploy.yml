@@ -6,6 +6,42 @@ on:
   workflow_dispatch: # Trigger manually
 
 jobs:
+  check-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check status of the first workflow
+        id: check-first-workflow
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: runs } = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'terraform-plan.yml',  # Name of the first workflow file
+              branch: 'main',  # Branch to check
+              event: 'push',   # Event that triggered the first workflow
+              status: 'completed',
+              per_page: 1
+            });
+    
+            if (runs.total_count === 0) {
+              throw new Error('No completed runs found for the first workflow.');
+            }
+    
+            const latestRun = runs.workflow_runs[0];
+            if (latestRun.conclusion !== 'success') {
+              throw new Error(`The first workflow did not succeed. Conclusion: ${latestRun.conclusion}`);
+            }
+    
+            return latestRun.conclusion;
+    
+      - name: Run some steps
+        if: steps.check-first-workflow.outcome == 'success'
+        run: echo "Running the second workflow because the first workflow succeeded"
+
   deploy:
     name: Terraform Apply
     runs-on: ubuntu-latest
