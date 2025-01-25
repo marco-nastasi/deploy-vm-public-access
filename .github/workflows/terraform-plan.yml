@@ -22,25 +22,21 @@ jobs:
 
     steps:
       - name: Checkout code
+        # Checks-out the repository under $GITHUB_WORKSPACE, so follow-up steps can access it
         id: checkout-code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Setup Terraform
+        # Use Terraform specific version
         id: setup-terraform
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
           terraform_version: ${{ vars.TF_VERSION }}
 
       - name: Check Terraform Formatting
+        # Perform format checks, fail if changes are needed
         id: fmt-check
         run: terraform fmt -check -recursive
-    
-      - name: Fail if Format Changes Are Needed
-        id: fmt-check-validation
-        if: ${{ failure() }}
-        run: |
-          echo "::error::Terraform formatting issues found. Please run 'terraform fmt' locally and commit the changes."
-          exit 1
 
   validate:
     # This job will perform code validation
@@ -53,16 +49,29 @@ jobs:
 
     steps:
       - name: Checkout code
+        # Checks-out the repository under $GITHUB_WORKSPACE, so follow-up steps can access it
         id: checkout-code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Setup Terraform
+        # Use Terraform specific version
         id: setup-terraform
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
           terraform_version: ${{ vars.TF_VERSION }}
 
+      - name: Terraform Init
+        # Initialize Terraform backend with custom parameters, download providers
+        id: tf-init
+        run: |
+          terraform init \
+          -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}" \
+          -backend-config="key=${{ secrets.TFSTATE_BUCKET_PATH }}" \
+          -backend-config="region=${{ vars.AWS_REGION }}" \
+          -backend-config="dynamodb_table=${{ secrets.TFSTATE_TABLE_NAME }}"
+
       - name: Validate Terraform
+        # Perform Terraform code validation
         id: tf-validate
         run: terraform validate
 
@@ -71,6 +80,8 @@ jobs:
     name: Security Scan
     runs-on: ubuntu-latest
 
+    needs: [format-check, validate]
+
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -78,8 +89,8 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so follow-up steps can access it
       - name: Checkout code
+        # Checks-out the repository under $GITHUB_WORKSPACE, so follow-up steps can access it
         id: checkout-code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
@@ -106,7 +117,7 @@ jobs:
 
   plan:
     # This job will create the Terraform plan and upload it to S3
-    needs: [format-check, validate, scan]
+    needs: [scan]
     name: Create Terraform plan
     runs-on: ubuntu-latest
     
@@ -116,10 +127,12 @@ jobs:
     
     steps:
       - name: Checkout code
+        # Checks-out the repository under $GITHUB_WORKSPACE, so follow-up steps can access it
         id: checkout-code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     
       - name: Setup Terraform
+        # Use Terraform specific version
         id: setup-terraform
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
@@ -134,7 +147,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
     
       - name: Terraform Init
-        # Initialize Terraform backend with custom parameters
+        # Initialize Terraform backend with custom parameters, download providers
         id: tf-init
         run: |
           terraform init \
