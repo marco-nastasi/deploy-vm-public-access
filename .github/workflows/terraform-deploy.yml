@@ -10,6 +10,27 @@ env:
   AWS_REGION: "eu-central-1"
 
 jobs:
+  check-plan-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Workflow A Status
+        id: check-status
+        uses: actions/github-script@d70566966bbb446d06887700f68d905602745985
+        with:
+          script: |
+            const { data: runs } = await github.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "terraform-plan.yml", # Replace with Workflow A filename
+              branch: "main",
+              status: "success"
+            });
+            if (runs.workflow_runs.length === 0) {
+              core.setFailed("No successful Terraform Plan run found.");
+            } else {
+              console.log("Last successful Terraform Plan run found:", runs.workflow_runs[0].html_url);
+            }
+
   deploy:
     name: Deploy to AWS using Terraform
     runs-on: ubuntu-latest
@@ -42,7 +63,11 @@ jobs:
             -backend-config="region=${{ env.AWS_REGION }}" \
             -backend-config="dynamodb_table=${{ secrets.TFSTATE_TABLE_NAME }}"
 
-      - name: Terraform Destroy
+      - name: Download plan from S3 bucket
         run: |
-          terraform destroy -auto-approve  \
-            -var="my_own_public_ip=${{ secrets.MY_PUBLIC_IP }}"
+          aws s3 cp s3://${{ secrets.TFSTATE_BUCKET_NAME }}/plan/output.tfplan \
+          output.tfplan
+
+      - name: Terraform Apply
+        run: |
+          terraform apply -auto-approve output.tfplan
