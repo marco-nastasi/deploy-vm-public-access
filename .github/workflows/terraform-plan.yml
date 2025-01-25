@@ -35,7 +35,7 @@ jobs:
 
       - name: Check Terraform Formatting
         # Perform format checks, fail if changes are needed
-        id: fmt-check
+        id: format-check
         run: terraform fmt -check -recursive
 
   validate:
@@ -70,7 +70,7 @@ jobs:
 
       - name: Terraform Init
         # Initialize Terraform backend with custom parameters, download providers
-        id: tf-init
+        id: terraform-init
         run: |
           terraform init \
           -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}" \
@@ -80,7 +80,7 @@ jobs:
 
       - name: Validate Terraform
         # Perform Terraform code validation
-        id: tf-validate
+        id: terraform-validate
         run: terraform validate
 
   scan:
@@ -156,7 +156,7 @@ jobs:
     
       - name: Terraform Init
         # Initialize Terraform backend with custom parameters, download providers
-        id: tf-init
+        id: terraform-init
         run: |
           terraform init \
           -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}" \
@@ -166,7 +166,7 @@ jobs:
     
       - name: Terraform Plan
         # Prepare Terraform plan using secret variables securely. Save the plan to file
-        id: tf-plan
+        id: terraform-plan
         run: |
           terraform plan  \
           -var="my_own_public_ip=${{ secrets.MY_PUBLIC_IP }}" \

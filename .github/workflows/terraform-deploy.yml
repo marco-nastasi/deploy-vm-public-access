@@ -102,6 +102,6 @@ jobs:
 
       - name: Terraform Apply
         # Apply downloaded plan
-        id: tf-apply
+        id: terraform-apply
         run: |
           terraform apply -auto-approve output.tfplan
