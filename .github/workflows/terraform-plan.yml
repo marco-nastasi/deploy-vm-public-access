@@ -1,16 +1,14 @@
 name: Prepare Terraform deployment to AWS
 
+# Top level permissions of the workflow
 permissions: {}
 
+# Will run on direct push or PR to "main" branch
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-
-env:
-  TF_VERSION: "1.10.4"
-  AWS_REGION: "eu-central-1"
 
 jobs:
   validate:
@@ -30,7 +28,7 @@ jobs:
         id: setup-terraform
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
-          terraform_version: ${{ env.TF_VERSION }}
+          terraform_version: ${{ vars.TF_VERSION }}
 
       - name: Check Terraform Formatting
         id: fmt-check
@@ -100,21 +98,21 @@ jobs:
         id: setup-terraform
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
-          terraform_version: ${{ env.TF_VERSION }}
+          terraform_version: ${{ vars.TF_VERSION }}
     
       - name: Configure AWS OIDC credentials
         id: configure-aws
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
     
       - name: Terraform Init
         run: |
           terraform init \
           -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}" \
           -backend-config="key=${{ secrets.TFSTATE_BUCKET_PATH }}" \
-          -backend-config="region=${{ env.AWS_REGION }}" \
+          -backend-config="region=${{ vars.AWS_REGION }}" \
           -backend-config="dynamodb_table=${{ secrets.TFSTATE_TABLE_NAME }}"
     
       - name: Terraform Plan
