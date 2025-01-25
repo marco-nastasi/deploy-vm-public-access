@@ -6,28 +6,6 @@ on:
   workflow_dispatch: # Trigger manually
 
 jobs:
-  check-plan-status:
-    name: Check that Plan stage ran successfully
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check Workflow A Status
-        id: check-status
-        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410
-        with:
-          script: |
-            const { data: runs } = await github.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: "terraform-plan.yml", # Replace with Workflow A filename
-              branch: "main",
-              status: "success"
-            });
-            if (runs.workflow_runs.length === 0) {
-              core.setFailed("No successful Terraform Plan run found.");
-            } else {
-              console.log("Last successful Terraform Plan run found:", runs.workflow_runs[0].html_url);
-            }
-
   deploy:
     name: Deploy to AWS using Terraform
     runs-on: ubuntu-latest
@@ -38,10 +16,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@9cd54a3c349d3f38e8881555d616ced269862dd
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
           terraform_version: ${{ vars.TF_VERSION }}
 
@@ -53,6 +31,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Terraform Init
+        id: terraform-init
         run: |
           terraform init \
             -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}" \
