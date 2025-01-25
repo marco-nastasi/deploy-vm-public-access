@@ -9,8 +9,9 @@ jobs:
   check-plan:
 
     permissions:
-        id-token: write
-        contents: read
+      id-token: write
+      contents: read
+      actions: read
 
     runs-on: ubuntu-latest
     steps:
