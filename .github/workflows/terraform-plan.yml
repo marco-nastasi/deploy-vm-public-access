@@ -123,5 +123,5 @@ jobs:
 
       - name: Upload Plan File to S3
         run: |
-          aws s3 cp output.tfplan s3://${{ secrets.TFSTATE_BUCKET_NAME }}/plan/output.tfplan
-  
+          aws s3 cp output.tfplan \
+          s3://${{ secrets.TFSTATE_BUCKET_NAME }}/plan/output.tfplan

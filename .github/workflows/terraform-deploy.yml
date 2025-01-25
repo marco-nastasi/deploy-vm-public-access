@@ -10,8 +10,8 @@ env:
   AWS_REGION: "eu-central-1"
 
 jobs:
-  destroy:
-    name: Remove from AWS using Terraform
+  deploy:
+    name: Deploy to AWS using Terraform
     runs-on: ubuntu-latest
 
     permissions:
