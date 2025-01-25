@@ -7,11 +7,12 @@ on:
 
 jobs:
   check-plan-status:
+    name: Check that Plan stage ran successfully
     runs-on: ubuntu-latest
     steps:
       - name: Check Workflow A Status
         id: check-status
-        uses: actions/github-script@d70566966bbb446d06887700f68d905602745985
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
         with:
           script: |
             const { data: runs } = await github.actions.listWorkflowRuns({
