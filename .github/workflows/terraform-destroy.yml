@@ -7,7 +7,7 @@ on:
 
 jobs:
   destroy:
-    name: Remove from AWS using Terraform
+    name: Terraform Destroy
     runs-on: ubuntu-latest
 
     permissions:

@@ -1,4 +1,4 @@
-name: Prepare Terraform deployment to AWS
+name: 1 - Prepare Terraform plan
 
 # Top level permissions of the workflow
 permissions: {}
