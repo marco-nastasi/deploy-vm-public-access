@@ -41,7 +41,6 @@ jobs:
           exit 1
 
   scan:
-    needs: validate
     name: Security Scan
 
     permissions:
@@ -81,7 +80,7 @@ jobs:
         #  sarif_file: results.sarif
 
   plan:
-    needs: scan
+    needs: [validate, scan]
     name: Create Terraform plan
     runs-on: ubuntu-latest
     
