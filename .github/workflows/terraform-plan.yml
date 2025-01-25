@@ -119,9 +119,9 @@ jobs:
         run: |
           terraform plan  \
           -var="my_own_public_ip=${{ secrets.MY_PUBLIC_IP }}" \
-          -out=tfplan
+          -out=output.tfplan
 
       - name: Upload Plan File to S3
         run: |
-          aws s3 cp tfplan s3://${{ secrets.TFSTATE_BUCKET_NAME }}/plan/tfplan
+          aws s3 cp tfplan s3://${{ secrets.TFSTATE_BUCKET_NAME }}/plan/output.tfplan
   
