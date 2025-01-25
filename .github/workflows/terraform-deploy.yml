@@ -1,5 +1,6 @@
 name: 2 - Deploy plan to AWS
 
+# Top level permissions of the workflow
 permissions: {}
 
 on:
@@ -7,7 +8,7 @@ on:
 
 jobs:
   check-plan:
-
+    # Check if the terraform-plan workflow was executed successfully 
     permissions:
       id-token: write
       contents: read
@@ -15,15 +16,13 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-
       - name: Check status of the first workflow
-        id: check-first-workflow
-        uses: actions/github-script@v6
+        # Script to check condition
+        id: check-plan-workflow
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
         with:
           script: |
-            // Get the current commit SHA of the second workflow
+            // Get the current commit SHA
             const currentCommitSha = context.sha;
 
             // Fetch the latest run of the first workflow for this commit
@@ -54,11 +53,8 @@ jobs:
             // Return the conclusion for use in subsequent steps
             return latestRun.conclusion;
 
-      - name: Run some steps
-        if: steps.check-first-workflow.outcome == 'success'
-        run: echo "Running the second workflow because the first workflow succeeded for the current commit."
-
   deploy:
+    # Job to deploy to AWS
     name: Terraform Apply
     runs-on: ubuntu-latest
     needs: check-plan
@@ -69,14 +65,17 @@ jobs:
 
     steps:
       - name: Checkout code
+        # Checks-out the repository under $GITHUB_WORKSPACE, so follow-up steps can access it
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Setup Terraform
+        # Use Terraform specific version
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
           terraform_version: ${{ vars.TF_VERSION }}
 
       - name: Configure AWS OIDC credentials
+        # Use Github OIDC to authenticate to AWS, assumming role
         id: configure-aws
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
@@ -85,6 +84,7 @@ jobs:
           mask-aws-account-id: true
 
       - name: Terraform Init
+        # Initialize Terraform backend with custom parameters, download providers
         id: terraform-init
         run: |
           terraform init \
@@ -94,10 +94,14 @@ jobs:
             -backend-config="dynamodb_table=${{ secrets.TFSTATE_TABLE_NAME }}"
 
       - name: Download plan from S3 bucket
+        # Fetch saved plan from previous workflow
+        id: download-plan-s3
         run: |
           aws s3 cp s3://${{ secrets.TFSTATE_BUCKET_NAME }}/plan/output.tfplan \
           output.tfplan
 
       - name: Terraform Apply
+        # Apply downloaded plan
+        id: tf-apply
         run: |
           terraform apply -auto-approve output.tfplan
