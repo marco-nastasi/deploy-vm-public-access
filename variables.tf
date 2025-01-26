@@ -29,6 +29,12 @@ variable "region" {
   default     = "eu-central-1"
 }
 
+variable "availability_zone" {
+  description = "The availability zone where resources will be deployed"
+  type        = string
+  default     = "eu-central-1a"
+}
+
 variable "address_space" {
   description = "The CIDR of the Virtual Network."
   type        = string

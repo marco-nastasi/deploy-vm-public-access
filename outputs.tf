@@ -1,30 +1,30 @@
 # Outputs file
 output "public_ip_address" {
-  value       = aws_instance.docker_playground.public_ip
+  value       = aws_instance.ec2_instance.public_ip
   description = "Public IP address of the instance"
 }
 
 output "vote_app_url" {
-  value       = "http://${aws_instance.docker_playground.public_ip}:8008"
+  value       = "http://${aws_instance.ec2_instance.public_dns}:8008"
   description = "Vote APP URL"
 }
 
 output "result_app_url" {
-  value       = "http://${aws_instance.docker_playground.public_ip}:8081"
+  value       = "http://${aws_instance.ec2_instance.public_dns}:8081"
   description = "Result APP URL"
 }
 
 output "prometheus_url" {
-  value       = "http://${aws_instance.docker_playground.public_ip}/prometheus"
+  value       = "http://${aws_instance.ec2_instance.public_dns}/prometheus"
   description = "Prometheus URL"
 }
 
 output "alertmanager_url" {
-  value       = "http://${aws_instance.docker_playground.public_ip}/alertmanager"
+  value       = "http://${aws_instance.ec2_instance.public_dns}/alertmanager"
   description = "Alertmanager URL"
 }
 
 output "grafana_url" {
-  value       = "http://${aws_instance.docker_playground.public_ip}/grafana"
+  value       = "http://${aws_instance.ec2_instance.public_dns}/grafana"
   description = "Grafana URL"
 }
