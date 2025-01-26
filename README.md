@@ -6,6 +6,14 @@ This is a simple project that runs multiple containerized applications using Doc
 
 This project uses Github Actions to deploy resources to AWS using Terraform. The main parts are the Terraform code itself and the Github Actions workflows to validate, scan, plan, apply and destroy resources.
 
+## Design principles
+
+1) The Terraform state file is stored in a S3 bucket, which also uses a DynamoDB table for state locking. Following best practices, the S3 bucket and the DynamoDB table are not part of this project. They were created with the help of a Terraform module, available here: https://github.com/marco-nastasi/terraform-aws-s3-dynamodb-state.
+2) The deployment and destruction of the resources in AWS is done through Github Actions workflows. The authentication is not done using permanent AWS Access Keys, instead Github is added as OIDC provider and temporary short lived credentials are used. This repo in the "main" branch is configured to be the trusted entity, IAM is configured to assign a least-access-privilege role that is only enough to deploy the resources contained in this project.
+3) Thorough Security Scans are performed with Checkov to make sure that best practices are used.
+4) The Terraform state file is considered a sensitive artifact, that's why it's not stored in Github but rather in a private S3 bucket that has encryption at rest.
+5) There are special mechanisms to make sure that the resources deployed to AWS correspond to a previously created plan. The goal is to avoid surprises by adding unwanted resources, also avoiding replacements or changes in key elements.  
+
 ## How to deploy to AWS?
 
 There are three Github Actions workflows that take care of the deployment. The first of the workflows (`terraform-plan.yml`) will automatically run when a commit is force-pushed or a PR is merged to the "main" branch. Additionally, it's also possible to execute it manually. Follow this order to deploy, simply click on Actions in this repo and execute:
