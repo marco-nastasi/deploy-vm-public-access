@@ -16,7 +16,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Check status of the first workflow
+      - name: Check status of the Terraform Plan workflow
         # Script to check condition
         id: check-plan-workflow
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
@@ -37,17 +37,12 @@ jobs:
               head_sha: currentCommitSha  // Filter by the current commit SHA
             });
 
-            // Check if any runs were found
-            if (runs.total_count === 0) {
-              throw new Error(`No completed runs found for the first workflow on commit ${currentCommitSha}.`);
-            }
-
             // Get the latest run
             const latestRun = runs.workflow_runs[0];
 
             // Check if the latest run was successful
             if (latestRun.conclusion !== 'success') {
-              throw new Error(`The first workflow did not succeed for commit ${currentCommitSha}. Conclusion: ${latestRun.conclusion}`);
+              throw new Error(`The Terraform Plan workflow did not succeed for commit ${currentCommitSha}. Conclusion: ${latestRun.conclusion}`);
             }
 
             // Return the conclusion for use in subsequent steps

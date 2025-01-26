@@ -168,7 +168,7 @@ EOF
 
 # Create AWS IAM Instance profile
 resource "aws_iam_instance_profile" "ec2_role" {
-  name = "${var.environment}/${var.appname}/EC2InstanceProfile"
+  name = "IAMEC2InstanceProfile"
   role = aws_iam_role.iam_role.name
 
   tags = merge(
