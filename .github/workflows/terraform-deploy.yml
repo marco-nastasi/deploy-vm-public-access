@@ -8,6 +8,7 @@ on:
 
 jobs:
   check-plan:
+    name: Check if valid plan exists
     # Check if the terraform-plan workflow was executed successfully 
     permissions:
       id-token: write
