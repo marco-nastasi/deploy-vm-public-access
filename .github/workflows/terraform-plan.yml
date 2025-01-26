@@ -111,18 +111,18 @@ jobs:
           output_format: cli,sarif
           output_file_path: console,results.sarif
         
-      #- name: Upload SARIF file
-      #  id: upload-security-scan-results
-      #  uses: github/codeql-action/upload-sarif@f6091c0113d1dcf9b98e269ee48e8a7e51b7bdd4
+      - name: Upload SARIF file
+        id: upload-security-scan-results
+        uses: github/codeql-action/upload-sarif@f6091c0113d1dcf9b98e269ee48e8a7e51b7bdd4
         
         # Results are generated only on a success or failure
         # this is required since GitHub by default won't run the next step
         # when the previous one has failed. Security checks that do not pass will 'fail'.
         # An alternative is to add `continue-on-error: true` to the previous step
         # Or 'soft_fail: true' to checkov.
-        #if: success() || failure()
-        #with:
-        #  sarif_file: results.sarif
+        if: success() || failure()
+        with:
+          sarif_file: results.sarif
 
   plan:
     # This job will create the Terraform plan and upload it to S3
