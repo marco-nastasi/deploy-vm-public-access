@@ -6,6 +6,17 @@ This is a simple project that runs multiple containerized applications using Doc
 
 This project uses Github Actions to deploy resources to AWS using Terraform. The main parts are the Terraform code itself and the Github Actions workflows to validate, scan, plan, apply and destroy resources.
 
+## How to deploy to AWS?
+
+There are three Github Actions workflows that take care of the deployment. The first of the workflows (`terraform-plan.yml`) will automatically run when a commit is force-pushed or a PR is merged to the "main" branch. Additionally, it's also possible to execute it manually. Follow this order to deploy, simply click on Actions in this repo and execute:
+
+1) 1 - Prepare Terraform plan
+2) 2 - Deploy to AWS
+
+If you don't need the infra anymore and wish to remove all resources, simply execute:
+
+3) 3 - Remove from AWS
+
 ## Components
 
 In this section you will find details about the main components of the project. Some design choices don't follow best practices, this is not production ready.
@@ -30,5 +41,9 @@ There are three reusable workflows in this project, located in the `.github/work
   - *Security Scan*: This job is executed using the Action `checkov` and its goal is to check how secure is the infrastructure to be deployed. A set of Security checks are performed to ensure that the best practices are strictly followed. If any recommendation is not followed the job will fail and stop the pipeline. This job runs after *Terraform format check* and *Validate Terraform code*.
   - *Create Terraform plan*: The goal of this job is to create a plan containing all the changes that need to be made to reach the defined state in the Terraform code. The plan may contain sensitive information, and that's why the plan file is not saved as an artifact, instead it's uploaded to the same S3 bucket where the Terraform state is stored. If the plan cannot be uploaded to the S3 bucket the job will fail and the pipeline will be stopped.
 
-- **2 - Deploy plan to AWS**: Defined in the `terraform-deploy.yml`. This workflow is not executed automatically, it needs a manual execution. It contains two jobs job:
-  - *Check if valid plan exists*: The goal of this job is to check if the workflow **1 - Prepare Terraform plan** was successfully executed for this specific version of the application. It checks the status of the most recent execution of the workflow and fails if it was not successful. This check is made to make sure that the changes that will be implemented correspond to a valid plan.
+- **2 - Deploy plan to AWS**: Defined in `terraform-deploy.yml`. This workflow is not executed automatically, it needs a manual execution. It contains two jobs job:
+  - *Check if valid plan exists*: The goal of this job is to check if the workflow "1 - Prepare Terraform plan" was successfully executed for this specific version of the application. It checks the status of the most recent execution of the workflow and the job fails if it was not successful. This check is made to make sure that the changes that will be implemented correspond to a valid plan.
+  - *Terraform Apply*: The goal of this job is to apply the changes contained in the plan that was prepared by the workflow "1 - Prepare Terraform plan", The plan is downloaded from the S3 bucket and then applied.
+
+- **3 - Remove from AWS**: Defined in `terraform-destroy.yml`. his workflow is not executed automatically, it needs a manual execution. It contains only one job:
+  - *Terraform Destroy*: The goal of this job is to remove all provisioned resources from AWS. This is achieved by the execution of the command `terraform destroy -auto-approve`.
