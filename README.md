@@ -18,4 +18,12 @@ In this section you will find details about the main components of the project. 
   - *Ingress*: The instance only accepts incoming connections on ports 80, 8008 and 8081 from an specific IP address. The allowed IP address is configured as a Github Actions variable called `TF_VAR_MY_OWN_PUBLIC_IP`, and that value will be passed to the Terraform variable `my_own_public_ip`. There is no default value for security reasons.
   - *Egress*: No restrictions are configured for the outbound traffic from the EC2 instance.
 - **Internet Gateway**: Allows traffic from and to the internet to the EC2 instance.
-- **EC2 instance**: A EC2 instance
+- **EC2 instance**: This is the VM where the APP is deployed. The type is defined in the Terraform variable `instance_type`. By default it's a `t2.micro`, which is the one offered in the first year of the AWS Free Tier. The OS of the VM is the latest release of Ubuntu 22.04 Server, which is also included in the AWS Free Tier. A cloud init script is part of the deployment, it's located inside the `scripts` folder. This VM will have a private IP address in the CIDR block of the Public Subnet, as well as a public IP address assigned by AWS when the instance is started.
+
+### Github Actions Workflows
+
+There are three reusable workflows in this project, located in the `.github/workflows` folder:
+
+- **1 - Prepare Terraform plan**: Defined in `terraform-plan.yml`. It contains four jobs:
+  - *Terraform format check*: The goal of this job is to perform Terraform format checks with the command `terraform fmt`. If this job finds format changes that need to be made, it will fail and stop the pipeline. This job automatically runs when a commit is force-pushed or a PR is merged to the "main" branch. This job runs in parallel to *Validate Terraform code*.
+  - *Validate Terraform code*: The goal of this job is to perform Terraform code validations with the command `terraform validate`. if this job finds issues, it will fail and stop the pipeline. This job automatically runs when a commit is force-pushed or a PR is merged to the "main" branch. This job runs in parallel to *Terraform format check*.
