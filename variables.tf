@@ -24,13 +24,13 @@ variable "prefix" {
 }
 
 variable "region" {
-  description = "The region where the resources are created."
+  description = "The region where resources will be deployed."
   type        = string
   default     = "eu-central-1"
 }
 
 variable "availability_zone" {
-  description = "The availability zone where resources will be deployed"
+  description = "The availability zone where resources will be deployed."
   type        = string
   default     = "eu-central-1a"
 }

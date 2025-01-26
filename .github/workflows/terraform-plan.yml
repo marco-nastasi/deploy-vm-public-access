@@ -66,7 +66,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ vars.TF_VAR_REGION }}
 
       - name: Terraform Init
         # Initialize Terraform backend with custom parameters, download providers
@@ -75,7 +75,7 @@ jobs:
           terraform init \
           -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}" \
           -backend-config="key=${{ secrets.TFSTATE_BUCKET_PATH }}" \
-          -backend-config="region=${{ vars.AWS_REGION }}" \
+          -backend-config="region=${{ vars.TF_VAR_REGION }}" \
           -backend-config="dynamodb_table=${{ secrets.TFSTATE_TABLE_NAME }}"
 
       - name: Validate Terraform
@@ -152,7 +152,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ vars.TF_VAR_REGION }}
     
       - name: Terraform Init
         # Initialize Terraform backend with custom parameters, download providers
@@ -161,7 +161,7 @@ jobs:
           terraform init \
           -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}" \
           -backend-config="key=${{ secrets.TFSTATE_BUCKET_PATH }}" \
-          -backend-config="region=${{ vars.AWS_REGION }}" \
+          -backend-config="region=${{ vars.TF_VAR_REGION }}" \
           -backend-config="dynamodb_table=${{ secrets.TFSTATE_TABLE_NAME }}"
     
       - name: Terraform Plan
@@ -170,6 +170,8 @@ jobs:
         run: |
           terraform plan  \
           -var="my_own_public_ip=${{ secrets.MY_PUBLIC_IP }}" \
+          -var="availability_zone"=${{ vars.TF_VAR_AVAILABILITY_ZONE }} \
+          -var="region"=${{ vars.TF_VAR_REGION }} \
           -out=output.tfplan
 
       - name: Upload Plan File to S3

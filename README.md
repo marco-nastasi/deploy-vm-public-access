@@ -13,7 +13,7 @@ In this section you will find details about the main components of the project. 
 ### AWS Infrastructure
 
 - **VPC**: This is the virtual network where all the resources will be provisioned. The CIDR block is defined in Terraform in the variable `address_space`. The default value is `10.0.0.0/16`.
-- **Public Subnet**: A VPC can contain one or more subnets. To simplify the deployment, a public subnet is used. The CIDR block of the subnet is contained in the CIDR block of the VPC, and its defined in the variable `subnet_prefix`. The default value is `10.0.10.0/24`.
+- **Public Subnet**: A VPC can contain one or more subnets. To simplify the deployment, a public subnet is deployed in the availability zone specified in the Terraform variable `availability_zone`. The CIDR block of the subnet is contained in the CIDR block of the VPC, and its defined in the variable `subnet_prefix`. The default value is `10.0.10.0/24`.
 - **Security Groups**:
   - *Ingress*: The instance only accepts incoming connections on ports 80, 8008 and 8081 from an specific IP address. The allowed IP address is configured as a Github Actions variable called `TF_VAR_MY_OWN_PUBLIC_IP`, and that value will be passed to the Terraform variable `my_own_public_ip`. There is no default value for security reasons.
   - *Egress*: No restrictions are configured for the outbound traffic from the EC2 instance.

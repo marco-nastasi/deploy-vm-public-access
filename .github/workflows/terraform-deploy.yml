@@ -75,7 +75,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ vars.TF_VAR_REGION }}
           mask-aws-account-id: true
 
       - name: Terraform Init
@@ -85,7 +85,7 @@ jobs:
           terraform init \
             -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}" \
             -backend-config="key=${{ secrets.TFSTATE_BUCKET_PATH }}" \
-            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="region=${{ vars.TF_VAR_REGION }}" \
             -backend-config="dynamodb_table=${{ secrets.TFSTATE_TABLE_NAME }}"
 
       - name: Download plan from S3 bucket
