@@ -228,7 +228,7 @@ resource "aws_instance" "ec2_instance" {
 # Define tags for all resources
 locals {
   tags = {
-    Service     = "${var.appname}"
-    Environment = "${var.environment}"
+    Service     = var.appname
+    Environment = var.environment
   }
 }
