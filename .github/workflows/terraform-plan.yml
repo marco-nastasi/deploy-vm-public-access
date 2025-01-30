@@ -104,10 +104,15 @@ jobs:
         with:
           tflint_version: "0.55.0"
 
+      - name: Init TFLint
+        id: init-tflint
+        run: tflint --init
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Run TFLint
         id: run-tflint
         run: |
-          tflint --init
           tflint
 
   scan:
@@ -115,7 +120,7 @@ jobs:
     name: Security Scan
     runs-on: ubuntu-latest
 
-    needs: [format-check, validate]
+    needs: [format-check, validate, linter]
 
     permissions:
       contents: read # for actions/checkout to fetch code
