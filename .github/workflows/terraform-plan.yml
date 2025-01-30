@@ -84,6 +84,32 @@ jobs:
         id: terraform-validate
         run: terraform validate
 
+  linter:
+    # This job will perform code lint
+    name: Lint Terraform code
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        # Checks-out the repository under $GITHUB_WORKSPACE, so follow-up steps can access it
+        id: checkout-code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up TFLint
+        id: setup-tflint
+        uses: terraform-linters/setup-tflint@8093687ecc9dcbfa88d07c103ad4176739a7287e
+        with:
+          tflint_version: "0.55.0"
+
+      - name: Run TFLint
+        id: run-tflint
+        run: |
+          tflint --init
+          tflint
+
   scan:
     # This job will perform security scan with Checkov
     name: Security Scan
