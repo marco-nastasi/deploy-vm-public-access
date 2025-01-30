@@ -103,12 +103,11 @@ jobs:
         uses: terraform-linters/setup-tflint@8093687ecc9dcbfa88d07c103ad4176739a7287e
         with:
           tflint_version: "0.55.0"
+          github_token: ${{ secrets.MY_GITHUB_TOKEN }}
 
       - name: Init TFLint
         id: init-tflint
         run: tflint --init
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Run TFLint
         id: run-tflint
