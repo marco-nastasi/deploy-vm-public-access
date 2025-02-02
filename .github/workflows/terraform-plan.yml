@@ -100,9 +100,9 @@ jobs:
 
       - name: Set up TFLint
         id: setup-tflint
-        uses: terraform-linters/setup-tflint@v4
+        uses: terraform-linters/setup-tflint@8093687ecc9dcbfa88d07c103ad4176739a7287e
         with:
-          tflint_version: "latest"
+          tflint_version: "0.55.1"
           github_token: ${{ secrets.MY_GITHUB_TOKEN }}
 
       - name: Init TFLint
