@@ -111,8 +111,7 @@ jobs:
 
       - name: Run TFLint
         id: run-tflint
-        run: |
-          tflint
+        run: tflint
 
   scan:
     # This job will perform security scan with Checkov
